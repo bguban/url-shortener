@@ -4,7 +4,7 @@ RSpec.describe "/urls", type: :request do
 
   let(:valid_attributes) { attributes_for(:url) }
 
-  let(:invalid_attributes) { attributes_for(:url, slug: nil) }
+  let(:invalid_attributes) { attributes_for(:url, target: 'bla') }
 
   let(:valid_headers) { {} }
 
@@ -54,6 +54,13 @@ RSpec.describe "/urls", type: :request do
         end.to change(Url, :count).by(1)
         expect(Url.last).to have_attributes(valid_attributes)
       end
+
+      it 'auto-generates slug if not passed' do
+        expect do
+          post urls_url, params: { url: valid_attributes.except(:slug) }, headers: valid_headers, as: :json
+        end.to change(Url, :count).by(1)
+        expect(Url.last).to have_attributes(valid_attributes.except(:slug))
+      end
     end
 
     context "with invalid parameters" do
@@ -62,7 +69,7 @@ RSpec.describe "/urls", type: :request do
           post urls_url, params: { url: invalid_attributes }, as: :json
         end.not_to change(Url, :count)
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(parsed['errors']).to include({ 'slug' => [ "can't be blank" ] })
+        expect(parsed['errors']).to include({ 'target' => [ "must be a valid URL" ] })
       end
     end
   end
@@ -87,7 +94,7 @@ RSpec.describe "/urls", type: :request do
         end.not_to change { url.reload }
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(parsed['errors']).to include('slug' => [ "can't be blank" ])
+        expect(parsed['errors']).to include('target' => [ "must be a valid URL" ])
       end
     end
   end
