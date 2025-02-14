@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe "/urls", type: :request do
-
   let(:valid_attributes) { attributes_for(:url) }
 
   let(:invalid_attributes) { attributes_for(:url, target: 'bla') }
