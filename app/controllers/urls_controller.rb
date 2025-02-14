@@ -1,9 +1,8 @@
 class UrlsController < ApplicationController
   def follow
-    url = Url.find_by(slug: params[:slug])
-    if url
-      Url.where(id: url.id).update_all('redirects_count = redirects_count + 1')
-      redirect_to url.target, allow_other_host: true
+    target = UrlFollower.new(params[:slug]).call
+    if target
+      redirect_to target, allow_other_host: true
     else
       head(:not_found)
     end
@@ -17,7 +16,7 @@ class UrlsController < ApplicationController
 
   # GET /urls/1
   def show
-    render json: { url: url }
+    render json: { url: UrlDetailsSerializer.new(url) }
   end
 
   # POST /urls

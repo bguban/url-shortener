@@ -39,12 +39,14 @@ RSpec.configure do |config|
 
   # Clean your DB between test runs
   config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner[:redis].strategy = :deletion
+    DatabaseCleaner[:active_record].strategy = :transaction
+    DatabaseCleaner[:active_record].clean_with(:truncation)
   end
 
   config.around(:each) do |example|
     begin
+      Rails.cache.clear
       DatabaseCleaner.cleaning do
         example.run
       end
