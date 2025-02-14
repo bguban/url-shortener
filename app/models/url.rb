@@ -7,4 +7,8 @@ class Url < ApplicationRecord
   def self.redirects_count_cache_key(id)
     "u/#{id}"
   end
+
+  def cached_redirects_count
+    Rails.cache.redis.with { |c| c.get(self.class.redirects_count_cache_key(id)) }.to_i
+  end
 end

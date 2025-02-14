@@ -4,12 +4,12 @@ class UrlDetailsSerializer
   end
 
   def as_json
-    @url.as_json.merge('redirects_count' => redirect_counters)
+    @url.as_json.merge('redirects_count' => redirects_count)
   end
 
   private
 
-  def redirect_counters
-    @url.redirects_count + (Rails.cache.redis.with { |c| c.get(Url.redirects_count_cache_key(@url.id)).to_i })
+  def redirects_count
+    @url.redirects_count + @url.cached_redirects_count
   end
 end

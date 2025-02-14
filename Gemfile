@@ -47,3 +47,4 @@ group :test do
   gem 'database_cleaner-redis'
 end
 
+gem 'sidekiq'
