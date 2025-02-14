@@ -8,6 +8,24 @@ RSpec.describe "/urls", type: :request do
 
   let(:valid_headers) { {} }
 
+  describe 'GET /:slug' do
+    let(:url) { create(:url) }
+
+    context 'when correct slug passed' do
+      it 'follows the redirect' do
+        get follows_url(slug: url.slug)
+        expect(response).to redirect_to(url.target)
+      end
+    end
+
+    context 'when a wrong slug passed' do
+      it 'returns 404' do
+        get follows_url(slug: 'bla')
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+  end
+
   describe "GET /index" do
     let!(:urls) { create_pair(:url) }
 

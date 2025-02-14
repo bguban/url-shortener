@@ -16,9 +16,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_14_094235) do
 
   create_table "urls", force: :cascade do |t|
     t.string "slug", null: false
-    t.text "url", null: false
+    t.text "target", null: false
     t.bigint "redirects_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_urls_on_slug", unique: true
   end
 end

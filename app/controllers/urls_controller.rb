@@ -1,4 +1,14 @@
 class UrlsController < ApplicationController
+  def follow
+    url = Url.find_by(slug: params[:slug])
+    if url
+      Url.where(id: url.id).update_all('redirects_count = redirects_count + 1')
+      redirect_to url.target, allow_other_host: true
+    else
+      head(:not_found)
+    end
+  end
+
   def index
     urls = Url.all
 
@@ -43,6 +53,6 @@ class UrlsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def url_params
-    params.require(:url).permit(:slug, :url)
+    params.require(:url).permit(:slug, :target)
   end
 end
